@@ -22,3 +22,9 @@ class Config:
             return Config._conf[index]
         else:
             return Config._list[index]
+
+    def __repr__(self):
+        return str(Config._conf)
+
+    def add(self, key, value):
+        Config._conf[key] = value

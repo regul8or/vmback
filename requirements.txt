@@ -1,2 +1,4 @@
 pathlib
+python-dotenv
 PyYAML
+XenAPI

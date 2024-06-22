@@ -1,27 +1,7 @@
-db:
-  dbms: 'mysql'
+pools:
+  - id: Home
+    hosts: [ 192.168.1.49 ]
 
-sqlite:
-  path: '../db/weather.db'
+env:
+  backup_location: '\temp'
 
-duckdb:
-  path: 'db/weather.duckdb'
-
-mysql:
-  host: 'mysql'
-  user: 'weather'
-  password: 'sunny-lime'
-  database: 'weather'
-
-provider:
-  name: 'tomorrow.io'
-
-location:
-  name: 'home'
-
-mqtt:
-  broker: 'mq.regul8or.home'
-  topic: 'regul8or.home/weather'
-
-ssl:
-  ca: '/usr/local/share/ca-certificates/regul8or-home-ca-x1-chain.crt'

@@ -3,6 +3,9 @@
 import argparse
 import sys
 
+from dotenv import dotenv_values
+
+
 from .config import Config
 from .misc import *
 
@@ -14,13 +17,25 @@ def main(args):
     if conf is None:
         return -1
 
-    print(conf['mysql'])
+    username = None
+    password = None
+    env = dotenv_values('.env')
+    if 'XEN_USERNAME' in env:
+        username = env['XEN_USERNAME']
+    if 'XEN_PASSWORD' in env:
+        password = env['XEN_PASSWORD']
 
-    for i in conf:
-        print(i)
+    if username is None or password is None:
+        print('Missing username or password')
+        return -1
+    auth = { 'username': username, 'password': password }
+    conf.add('auth', auth)
 
-    if 'db' in conf:
-        print(conf['db'])
+    if 'pools' in conf:
+        pools = conf['pools']
+        print(pools)
+        for pool in pools:
+            print(pool)
 
     return 0
 
