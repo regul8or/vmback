@@ -4,27 +4,23 @@ import argparse
 import sys
 
 from .config import Config
-
-
-def get_conf():
-    conf = None
-    try:
-        conf = Config('config.yaml')
-    except Exception as e:
-        print(e)
-        conf = None
-    return conf
+from .misc import *
 
 
 def main(args):
     print('Using', args.conf)
 
-    conf = get_conf()
+    conf = get_conf(args.conf)
     if conf is None:
         return -1
 
-    for i in conf.get():
+    print(conf['mysql'])
+
+    for i in conf:
         print(i)
+
+    if 'db' in conf:
+        print(conf['db'])
 
     return 0
 
