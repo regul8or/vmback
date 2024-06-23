@@ -1,7 +1,14 @@
 pools:
   - id: Home
     hosts: [ 192.168.1.49 ]
+    scope: [ 'metadata', 'vm' ]
 
 env:
-  backup_location: '\temp'
+  backup_location: 'c:\temp'
 
+xe:
+  'pool-dump-database': 'xe -s {host} -u {username} -pw {password} pool-dump-database file-name={filename}'
+
+after:
+  metadata:
+    - 'del {filename}'
