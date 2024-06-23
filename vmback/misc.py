@@ -27,6 +27,15 @@ def log(msg):
     complete_log += dt + ' ' + msg + '\n'
 
 
+def log_export():
+    global complete_log
+
+    now = datetime.now()
+    filename = 'vmback-' + now.strftime('%Y%m%d-%H%M%S') + '.log'
+    with open(filename, 'w') as f:
+        f.write(complete_log)
+
+
 def run_shell_command(cmd):
     log(cmd)
     process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True)

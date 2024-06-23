@@ -19,6 +19,8 @@ from .pool import pool_backup
         https://docs.xenserver.com/en-us/citrix-hypervisor/command-line-interface.html
         https://github.com/xapi-project/xen-api/blob/master/scripts/examples/python/exportimport.py
         https://docs.xenserver.com/en-us/xenserver/8/dr/backup.html
+        https://docs.xenserver.com/en-us/xenserver/developer/sdk-guide/python
+        https://docs.xenserver.com/en-us/xenserver/developer/sdk-guide/using-http
 """
 
 def main(args):
@@ -60,6 +62,9 @@ def main(args):
                 pool_backup(pool, conf)
             except Exception as err:
                 print(f'Unexpected {err=}, {type(err)=}')
+
+    log('Closing Log')
+    log_export()
 
     if prev_path is not None:
         os.chdir(prev_path)

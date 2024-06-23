@@ -32,7 +32,7 @@ def pool_backup(pool, conf):
             log('*** ERROR: Could not connect')
 
     if session is not None:
-        log('Connected')
+        log(f'Connected, session id: {session.xenapi.session.get_uuid(session._session)}')
     else:
         log('*** FATAL: Could not process a pool')
     """
@@ -65,7 +65,7 @@ def pool_backup(pool, conf):
             cmd = str_format(str, filename=meta_file)
             run_shell_command(cmd)
 
-    if not session is None:
+    if session is not None:
         session.logout()
 
     return 0
