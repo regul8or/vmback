@@ -11,6 +11,16 @@ from .config import Config
 from .misc import *
 from .pool import pool_backup
 
+"""
+    Some links:
+        https://github.com/NAUbackup/VmBackup/blob/master/VmBackup.py
+        https://xapi-project.github.io/xen-api/usage.html
+        https://xapi-project.github.io/xen-api/classes/pool.html
+        https://docs.xenserver.com/en-us/citrix-hypervisor/command-line-interface.html
+        https://github.com/xapi-project/xen-api/blob/master/scripts/examples/python/exportimport.py
+        https://docs.xenserver.com/en-us/xenserver/8/dr/backup.html
+"""
+
 def main(args):
     log(f'Using config file: {args.conf}')
 
