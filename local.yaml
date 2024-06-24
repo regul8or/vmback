@@ -1,5 +1,5 @@
 pools:
-  - id: Home
+  - id: Supermicro-6019
     hosts: [ 172.18.0.25, 172.18.0.26, 172.18.0.27, 172.18.0.28 ]
     scope: [ 'metadata', 'vm' ]
 
