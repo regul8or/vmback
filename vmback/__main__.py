@@ -1,15 +1,12 @@
 #!/usr/bin/env python3
 
 import argparse
-import os
 import sys
-import pathlib
 
-from dotenv import dotenv_values
-
-from .config import Config
+from .backup import backup
+from .list_vm import list_vm
+from .list_vdi import list_vdi
 from .misc import *
-from .pool import pool_backup
 
 """
     Some links:
@@ -23,57 +20,31 @@ from .pool import pool_backup
         https://docs.xenserver.com/en-us/xenserver/developer/sdk-guide/using-http
 """
 
-def main(args):
-    log(f'Using config file: {args.conf}')
-
-    conf = get_conf(args.conf)
-    if conf is None:
-        return -1
-
-    username = None
-    password = None
-    env = dotenv_values('.env')
-    if 'XEN_USERNAME' in env:
-        username = env['XEN_USERNAME']
-    if 'XEN_PASSWORD' in env:
-        password = env['XEN_PASSWORD']
-
-    if username is None or password is None:
-        log('*** FATAL: Missing username or password')
-        return -1
-    conf.add('auth', { 'username': username, 'password': password })
-
-    prev_path = None
-    if 'backup_location' in conf['env']:
-        path = conf['env']['backup_location']
-        if pathlib.Path(path).exists():
-            prev_path = os.getcwd()
-            os.chdir(path)
-
-    log(f'Backup location: {os.getcwd()}')
-    if not os.access(os.getcwd(), os.W_OK):
-        log('*** FATAL: Location is not writable')
-        return -1
-
-    if 'pools' in conf:
-        pools = conf['pools']
-        for pool in pools:
-            try:
-                pool_backup(pool, conf)
-            except Exception as err:
-                print(f'Unexpected {err=}, {type(err)=}')
-
-    log('Closing Log')
-    log_export()
-
-    if prev_path is not None:
-        os.chdir(prev_path)
-
-    return 0
-
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(prog='vmback', description='Backup Xen VMs')
+    parser.add_argument('mode', choices=['backup', 'vm', 'vdi'], help='Action to perform')
     parser.add_argument('-c', '--config', dest='conf', default='config.yaml', help='Specify a config .yaml file')
     args = parser.parse_args()
-    sys.exit(main(args))
+
+    log(f'Using config file: {args.conf}')
+    conf = get_conf(args.conf)
+    if conf is None:
+        log('*** FATAL: Config file does not exist')
+        sys.exit(-1)
+
+    if get_env(conf) != 0:
+        log('*** FATAL: Missing username or password')
+        sys.exit(-1)
+
+    ret = 0
+    if args.mode == 'backup':
+        ret = backup(conf)
+    elif args.mode == 'vm':
+        ret = list_vm(conf)
+    elif args.mode == 'vdi':
+        ret = list_vdi(conf)
+    else:
+        print('Invalid command')
+        ret = -1
+    sys.exit(ret)

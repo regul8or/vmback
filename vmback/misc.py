@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
 
 import subprocess
+
 from datetime import datetime
+from pathlib import Path
+from dotenv import dotenv_values
 
 from .config import Config
 
@@ -18,6 +21,21 @@ def get_conf(c):
     return conf
 
 
+def get_env(conf):
+    username = None
+    password = None
+    env = dotenv_values('.env')
+    if 'XEN_USERNAME' in env:
+        username = env['XEN_USERNAME']
+    if 'XEN_PASSWORD' in env:
+        password = env['XEN_PASSWORD']
+
+    if username is None or password is None:
+        return -1
+    conf.add('auth', { 'username': username, 'password': password })
+    return 0
+
+
 def log(msg):
     global complete_log
 
@@ -27,12 +45,13 @@ def log(msg):
     complete_log += dt + ' ' + msg + '\n'
 
 
-def log_export():
+def log_export(log_path):
     global complete_log
 
     now = datetime.now()
-    filename = 'vmback-' + now.strftime('%Y%m%d-%H%M%S') + '.log'
-    with open(filename, 'w') as f:
+    file_name = 'vmback-' + now.strftime('%Y%m%d-%H%M%S') + '.log'
+    file = Path(log_path) / file_name
+    with file.open('w') as f:
         f.write(complete_log)
 
 
