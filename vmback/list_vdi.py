@@ -6,13 +6,6 @@ from .config import Config
 from .misc import *
 from .xapi import *
 
-"""
-xenapi_pool = session.xenapi.pool.get_all()[0]
-print(xenapi_pool)
-pool_record = session.xenapi.pool.get_record(xenapi_pool)
-print(pool_record)
-"""
-
 
 def _list_pool_vdi(pool, conf):
     if 'id' in pool:

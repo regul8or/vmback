@@ -7,9 +7,13 @@ env:
   backup-path: 'c:\temp'
   log-path: 'c:\temp\log'
 
+vm:
+  - vm-uuid: '2e3180e9-02b2-a754-2158-f9966ac56271'
+    vm-name: 'Transmission'
+
 xe:
   pool-dump-database: 'xe -s {host} -u {username} -pw {password} pool-dump-database file-name={filename}'
 
 after:
   metadata:
-#    - 'del {filename}'
+    - 'del {filename}'

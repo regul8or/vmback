@@ -26,7 +26,7 @@ def _list_pool_vm(pool, conf):
     table.preserve_internal_border = True
     table.align = 'l'
     table.left_padding_width = 0
-    table.field_names = ['vm uuid', 'name_label', 'power_state']
+    table.field_names = ['vm uuid', 'name_label', 'power_state', 'host', 'address']
     all_vm_objects = session.xenapi.VM.get_all()
     for vm_object in all_vm_objects:
         vm = session.xenapi.VM.get_record(vm_object)
@@ -36,7 +36,15 @@ def _list_pool_vm(pool, conf):
         # Skip control domain
         if vm['is_control_domain']:
             continue
-        table.add_row([vm['uuid'], vm['name_label'], vm['power_state']])
+        host_object = vm['resident_on']
+        if 'NULL' in host_object:
+            host_name = ''
+            host_address = ''
+        else:
+            host = session.xenapi.host.get_record(host_object)
+            host_name = host['hostname']
+            host_address = host['address']
+        table.add_row([vm['uuid'], vm['name_label'], vm['power_state'], host_name, host_address])
     print(table)
 
     if session is not None:
