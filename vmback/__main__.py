@@ -14,6 +14,7 @@ from .misc import *
         https://xapi-project.github.io/xen-api/usage.html
         https://xapi-project.github.io/xen-api/classes/pool.html
         https://docs.xenserver.com/en-us/citrix-hypervisor/command-line-interface.html
+        https://docs.xenserver.com/en-us/citrix-hypervisor/vms/import-export.html
         https://github.com/xapi-project/xen-api/blob/master/scripts/examples/python/exportimport.py
         https://docs.xenserver.com/en-us/xenserver/8/dr/backup.html
         https://docs.xenserver.com/en-us/xenserver/developer/sdk-guide/python
