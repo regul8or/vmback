@@ -20,7 +20,7 @@ def _list_pool_vdi(pool, conf):
     log(f'Connected, session id: {session.xenapi.session.get_uuid(session._session)}')
 
     table = prettytable.PrettyTable()
-    table.field_names = ['vm uuid', 'vm name_label', 'power_state', 'device', 'name_label', 'virtual_size']
+    table.field_names = ['vm uuid', 'vm name_label', 'power_state', 'device', 'name_label', 'virtual_size', 'snapshot']
     table.border = False
     table.hrules = prettytable.HEADER
     table.vrules = prettytable.NONE
@@ -43,10 +43,11 @@ def _list_pool_vdi(pool, conf):
             if vbd['type'] != 'Disk':
                 continue
             vdi = session.xenapi.VDI.get_record(vbd['VDI'])
+            is_a_snapshot = ''
             if vdi['is_a_snapshot']:
-                continue
+                is_a_snapshot = 'Yes'
             size = f"{int(vdi['virtual_size']):,}"
-            table.add_row([vm['uuid'], vm['name_label'], vm['power_state'], vbd['device'], vdi['name_label'], size])
+            table.add_row([vm['uuid'], vm['name_label'], vm['power_state'], vbd['device'], vdi['name_label'], size, is_a_snapshot])
     print(table)
 
     if session is not None:

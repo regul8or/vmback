@@ -7,6 +7,7 @@ from pathlib import Path
 from .config import Config
 from .misc import *
 from .xapi import *
+from .backup_vdi import backup_vdi
 
 
 def backup(conf):
@@ -31,6 +32,16 @@ def backup(conf):
     log(f'Log path: {log_path}')
     if not os.access(log_path, os.W_OK):
         log('*** FATAL: Log path is not writable')
+        return -1
+
+    if 'pool-dump-database' not in conf['xe']:
+        log('*** FATAL: No \'pool-dump-database\' config parameter specified')
+        return -1
+    if 'vdi-export' not in conf['xe']:
+        log('*** FATAL: No \'vdi-export\' config parameter specified')
+        return -1
+    if 'vm-export' not in conf['xe']:
+        log('*** FATAL: No \'vm-export\' config parameter specified')
         return -1
 
     if 'pools' in conf:
@@ -67,22 +78,19 @@ def pool_backup(pool, conf):
     if 'metadata' in pool['scope']:
         meta_file = f'{pool["id"]}-meta.xml'
         log(f'Backing up pool metadata to {meta_file}')
-        if 'pool-dump-database' not in conf['xe']:
-            log('*** FATAL: No \'pool-dump-database\' config parameter specified')
+        if Path(meta_file).exists():
+            log(f'*** WARNING: {meta_file} file exists, removing it')
+            Path(meta_file).unlink()
+        cmd = str_format(conf['xe']['pool-dump-database'], host=pool['master'], username=conf['auth']['username'], password=conf['auth']['password'], filename=meta_file)
+        if run_shell_command(cmd) != 0:
             ret = -1
-        else:
-            if Path(meta_file).exists():
-                log(f'*** WARNING: {meta_file} file exists, removing it')
-                Path(meta_file).unlink()
-            cmd = str_format(conf['xe']['pool-dump-database'], host=pool['master'], username=conf['auth']['username'], password=conf['auth']['password'], filename=meta_file)
-            if run_shell_command(cmd) != 0:
-                ret = -1
 
-    if ret is None and 'vm' in pool['scope']:
+    if ret is None and 'vm' in pool['scope'] and 'vm' in conf and conf['vm'] is not None:
         log(f'Backing up Virtual Machines')
 
-    if ret is None and 'vdi' in pool['scope']:
+    if ret is None and 'vdi' in pool['scope'] and 'vdi' in conf and conf['vdi'] is not None:
         log(f'Backing up Virtual Disk Images')
+        ret = backup_vdi(session, pool, conf)
 
     log(f'Clean Up')
     if 'metadata' in conf['after'] and conf['after']['metadata'] is not None:

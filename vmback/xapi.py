@@ -28,3 +28,18 @@ def pool_connect(pool, conf):
             log(f'Unexpected {err=}, {type(err)=}')
             log('*** ERROR: Could not connect')
     return session
+
+
+def vm_export_metadata(vm, pool, conf):
+    vm_uuid = vm['uuid']
+    vm_name = vm['name_label']
+    filename = vm_name + '-meta.tar'
+    log(f'Exporting VM metadata to "{filename}"')
+    if Path(filename).exists():
+        log(f'*** WARNING: {filename} file exists, removing it')
+        Path(filename).unlink()
+    cmd = str_format(conf['xe']['vm-export'], host=pool['master'], username=conf['auth']['username'], password=conf['auth']['password'], uuid=vm_uuid, metadata='true', filename=filename)
+    if run_shell_command(cmd) != 0:
+        log(f'*** Error exporting VM metadata')
+    else:
+        log(f'VM metadata export complete')

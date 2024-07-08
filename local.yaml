@@ -7,16 +7,23 @@ pools:
     scope: [ 'metadata', 'vm', 'vdi' ]
 
 env:
-  backup_location: 'c:\temp'
+  backup-path: 'c:\temp'
   log-path: 'c:\temp\log'
 
 vm:
   - vm-uuid: '2e3180e9-02b2-a754-2158-f9966ac56271'
     vm-name: 'Transmission'
 
+vdi:
+  - vm-uuid: '2882af51-704a-c967-a816-7c60443d9a0c'
+    vm-name: 'Backup Server'
+    device: 'xvda'
+
 xe:
   pool-dump-database: 'xe -s {host} -u {username} -pw {password} pool-dump-database file-name={filename}'
+  vdi-export: 'xe -s {host} -u {username} -pw {password} vdi-export uuid={uuid} format=vhd filename="{filename}"'
+  vm-export: 'xe -s {host} -u {username} -pw {password} vm-export uuid={uuid} metadata={metadata} filename="{filename}"'
 
 after:
   metadata:
-    - 'del {filename}'
+#    - 'del {filename}'
