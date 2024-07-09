@@ -8,6 +8,7 @@ from .config import Config
 from .misc import *
 from .xapi import *
 from .backup_vdi import backup_vdi
+from .backup_vm import backup_vm
 
 
 def backup(conf):
@@ -87,6 +88,7 @@ def pool_backup(pool, conf):
 
     if ret is None and 'vm' in pool['scope'] and 'vm' in conf and conf['vm'] is not None:
         log(f'Backing up Virtual Machines')
+        ret = backup_vm(session, pool, conf)
 
     if ret is None and 'vdi' in pool['scope'] and 'vdi' in conf and conf['vdi'] is not None:
         log(f'Backing up Virtual Disk Images')

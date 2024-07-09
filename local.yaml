@@ -1,18 +1,18 @@
 pools:
   - id: Supermicro-6019
     hosts: [ 172.18.0.25, 172.18.0.26, 172.18.0.27, 172.18.0.28 ]
-    scope: [ 'metadata', 'vm', 'vdi' ]
+    scope: [ 'metadata', 'vm', 'vdi', host' ]
   - id: srv-sm-x7dcli-1
     hosts: [ 172.18.0.29 ]
-    scope: [ 'metadata', 'vm', 'vdi' ]
+    scope: [ 'metadata', 'vm', 'host' ]
 
 env:
   backup-path: 'c:\temp'
   log-path: 'c:\temp\log'
 
 vm:
-  - vm-uuid: '2e3180e9-02b2-a754-2158-f9966ac56271'
-    vm-name: 'Transmission'
+  - vm-uuid: '94a33466-b76e-b2f4-c4e7-a484f983caf0'
+    vm-name: '1C Web Server 3'
 
 vdi:
   - vm-uuid: '2882af51-704a-c967-a816-7c60443d9a0c'

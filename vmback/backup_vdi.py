@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-import prettytable
 import time
 
 from .config import Config
@@ -35,6 +34,9 @@ def _backup_vdi(session, vdi_object, vm_name, vbd_device, pool, conf):
     log(f'   Removed')
     return 0
 
+#
+# TODO: Check for free space
+#
 
 def backup_vdi(session, pool, conf):
     for vm in conf['vdi']:
