@@ -77,7 +77,7 @@ def pool_backup(pool, conf):
     if 'metadata' in pool['scope']:
         pool_meta_filename = str_format(conf['env']['pool-metadata-template'], pool_name=pool['name'], pool_uuid=pool['uuid'])
         conf['env']['pool_meta_filename'] = pool_meta_filename
-        log(f'Backing up pool metadata to {pool_meta_filename}')
+        log(f'Backing up pool metadata to "{pool_meta_filename}"')
         if Path(pool_meta_filename).exists():
             log(f'*** WARNING: {pool_meta_filename} file exists, removing it')
             Path(pool_meta_filename).unlink()
