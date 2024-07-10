@@ -43,7 +43,8 @@ def backup_vm(session, pool, conf):
         session.xenapi.VM.set_is_a_template(vm_snapshot_object, False)
         session.xenapi.VM.set_ha_always_run(vm_snapshot_object, False)
 
-        vm_filename = vm_name + '.xva'
+#        vm_filename = vm_name + '.xva'
+        vm_filename = str_format(conf['env']['vm-template'], vm_name=vm_record['name_label'], vm_uuid=vm_record['uuid'])
         log(f'3. Exporting a snapshot to "{vm_filename}"')
         if Path(vm_filename).exists():
             log(f'   *** WARNING: {vm_filename} file exists, removing it')

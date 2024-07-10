@@ -35,15 +35,13 @@ def backup(conf):
         log('*** FATAL: Log path is not writable')
         return -1
 
-    if 'pool-dump-database' not in conf['xe']:
-        log('*** FATAL: No \'pool-dump-database\' config parameter specified')
-        return -1
-    if 'vdi-export' not in conf['xe']:
-        log('*** FATAL: No \'vdi-export\' config parameter specified')
-        return -1
-    if 'vm-export' not in conf['xe']:
-        log('*** FATAL: No \'vm-export\' config parameter specified')
-        return -1
+    if check_conf_parameter(conf['xe'], 'pool-dump-database') == -1: return -1
+    if check_conf_parameter(conf['xe'], 'vdi-export') == -1: return -1
+    if check_conf_parameter(conf['xe'], 'vm-export') == -1: return -1
+    if check_conf_parameter(conf['env'], 'pool-metadata-template') == -1: return -1
+    if check_conf_parameter(conf['env'], 'vdi-template') == -1: return -1
+    if check_conf_parameter(conf['env'], 'vm-metadata-template') == -1: return -1
+    if check_conf_parameter(conf['env'], 'vm-template') == -1: return -1
 
     if 'pools' in conf:
         pools = conf['pools']
@@ -77,14 +75,21 @@ def pool_backup(pool, conf):
     log(f'Connected, session id: {session.xenapi.session.get_uuid(session._session)}')
 
     if 'metadata' in pool['scope']:
-        meta_file = f'{pool["id"]}-meta.xml'
-        log(f'Backing up pool metadata to {meta_file}')
-        if Path(meta_file).exists():
-            log(f'*** WARNING: {meta_file} file exists, removing it')
-            Path(meta_file).unlink()
-        cmd = str_format(conf['xe']['pool-dump-database'], host=pool['master'], username=conf['auth']['username'], password=conf['auth']['password'], filename=meta_file)
+        pool_meta_filename = str_format(conf['env']['pool-metadata-template'], pool_name=pool['name'], pool_uuid=pool['uuid'])
+        conf['env']['pool_meta_filename'] = pool_meta_filename
+        log(f'Backing up pool metadata to {pool_meta_filename}')
+        if Path(pool_meta_filename).exists():
+            log(f'*** WARNING: {pool_meta_filename} file exists, removing it')
+            Path(pool_meta_filename).unlink()
+        cmd = str_format(conf['xe']['pool-dump-database'], host=pool['master'], username=conf['auth']['username'], password=conf['auth']['password'], filename=pool_meta_filename)
         if run_shell_command(cmd) != 0:
             ret = -1
+
+    log(f'Pool Metadata Clean Up')
+    if 'metadata' in conf['after'] and conf['after']['metadata'] is not None:
+        for str in conf['after']['metadata']:
+            cmd = str_format(str, filename=pool_meta_filename)
+            run_shell_command(cmd)
 
     if ret is None and 'vm' in pool['scope'] and 'vm' in conf and conf['vm'] is not None:
         log(f'Backing up Virtual Machines')
@@ -93,12 +98,6 @@ def pool_backup(pool, conf):
     if ret is None and 'vdi' in pool['scope'] and 'vdi' in conf and conf['vdi'] is not None:
         log(f'Backing up Virtual Disk Images')
         ret = backup_vdi(session, pool, conf)
-
-    log(f'Clean Up')
-    if 'metadata' in conf['after'] and conf['after']['metadata'] is not None:
-        for str in conf['after']['metadata']:
-            cmd = str_format(str, filename=meta_file)
-            run_shell_command(cmd)
 
     if session is not None:
         log('Closing session')

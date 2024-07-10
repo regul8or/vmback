@@ -9,6 +9,10 @@ pools:
 env:
   backup-path: '/mnt/backup/temp'
   log-path: '/var/log/vmback'
+  pool-metadata-template: '{pool_name}.xml'
+  vdi-template: '{vm_name} - {device}.vhd'
+  vm-metadata-template: '{vm_name}.tar'
+  vm-template: '{vm_name}.xva'
 
 vm:
   - vm-uuid: '94a33466-b76e-b2f4-c4e7-a484f983caf0'
@@ -20,9 +24,9 @@ vdi:
     device: 'xvda'
 
 xe:
-  pool-dump-database: 'xe -s {host} -u {username} -pw {password} pool-dump-database file-name={filename}'
-  vdi-export: 'xe -s {host} -u {username} -pw {password} vdi-export uuid={uuid} format=vhd filename="{filename}"'
-  vm-export: 'xe -s {host} -u {username} -pw {password} vm-export uuid={uuid} metadata={metadata} filename="{filename}"'
+  pool-dump-database: 'xe -s {host} pool-dump-database file-name={filename}'
+  vdi-export: 'xe -s {host} vdi-export uuid={uuid} format=vhd filename="{filename}"'
+  vm-export: 'xe -s {host} vm-export uuid={uuid} metadata={metadata} filename="{filename}"'
 
 after:
   metadata:

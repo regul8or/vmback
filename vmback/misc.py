@@ -21,6 +21,13 @@ def get_conf(c):
     return conf
 
 
+def check_conf_parameter(node, param):
+    if node is not None and param not in node:
+        log('*** FATAL: No \'' + param + '\' config parameter specified')
+        return -1
+    return 0
+
+
 def get_env(conf):
     username = None
     password = None

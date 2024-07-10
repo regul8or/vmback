@@ -7,14 +7,14 @@ from .misc import *
 from .xapi import *
 
 
-def _backup_vdi(session, vdi_object, vm_name, vbd_device, pool, conf):
+def _backup_vdi(session, vdi_object, vm_record, vbd_device, pool, conf):
     log(f'1. Creating a snapshot')
     vdi_snapshot_object = session.xenapi.VDI.snapshot(vdi_object)
     vdi_snapshot_record = session.xenapi.VDI.get_record(vdi_snapshot_object)
     vdi_snapshot_uuid = vdi_snapshot_record['uuid']
     log(f'   Created snapshot {vdi_snapshot_uuid}')
 
-    vdi_filename = vm_name + ' - ' + vbd_device + '.vhd'
+    vdi_filename = str_format(conf['env']['vdi-template'], vm_name=vm_record['name_label'], vm_uuid=vm_record['uuid'], device=vbd_device)
     log(f'2. Exporting a snapshot to "{vdi_filename}"')
     if Path(vdi_filename).exists():
         log(f'   *** WARNING: {vdi_filename} file exists, removing it')
@@ -75,6 +75,6 @@ def backup_vdi(session, pool, conf):
                 continue
             log(f'VDI UUID: {vdi_uuid}')
             vm_export_metadata(vm_record, pool, conf)
-            _backup_vdi(session, vdi_object, vm_name, vbd_device, pool, conf)
+            _backup_vdi(session, vdi_object, vm_record, vbd_device, pool, conf)
 
     return 0
