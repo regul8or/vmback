@@ -1,10 +1,10 @@
 pools:
   - id: Supermicro-6019
     hosts: [ 172.18.0.25, 172.18.0.26, 172.18.0.27, 172.18.0.28 ]
-    scope: [ 'metadata' ]
+    scope: [ 'metadata', 'vm', 'vdi', 'host' ]
   - id: srv-sm-x7dcli-1
     hosts: [ 172.18.0.29 ]
-    scope: [ 'metadata' ]
+    scope: [ 'metadata', 'vm', 'vdi', 'host' ]
 
 env:
   backup-path: '/mnt/backup/temp'
@@ -15,8 +15,8 @@ env:
   vm-template: '{vm_name}.xva'
 
 vm:
-#  - vm-uuid: '94a33466-b76e-b2f4-c4e7-a484f983caf0'
-#    vm-name: '1C Web Server 3'
+  - vm-uuid: '94a33466-b76e-b2f4-c4e7-a484f983caf0'
+    vm-name: '1C Web Server 3'
   - vm-uuid: fde030bb-bbb9-a7a2-3097-18763c9aa875
     vm-name: 'Ansible'
 
