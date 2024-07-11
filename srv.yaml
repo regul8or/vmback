@@ -34,9 +34,13 @@ after:
   metadata:
     - 'echo "After pool metadata backup"'
   vm:
-    - 'echo "After each VM backup"'
+    - 'borg2 --repo "/mnt/backup/xen/vm/{vm_name}" rcreate --encryption=none --make-parent-dirs'
+    - 'borg2 --repo "/mnt/backup/xen/vm/{vm_name}" create --list {y:04}-{m:02}-{d:02} "{vm_name}*"'
+    - 'rm "{vm_name}*"'
   vdi:
-    - 'echo "After each VDI backup"'
+    - 'borg2 --repo "/mnt/backup/xen/vm/{vm_name}" rcreate --encryption=none --make-parent-dirs'
+    - 'borg2 --repo "/mnt/backup/xen/vm/{vm_name}" create --list {y:04}-{m:02}-{d:02} "{vm_name}*"'
+    - 'rm "{vm_name}*"'
   host:
     - 'echo "After each host backup"'
   job:

@@ -53,8 +53,8 @@ def backup(conf):
 
     log(f'Running After Job Commands')
     if 'job' in conf['after'] and conf['after']['job'] is not None:
+        now = get_ymd()
         for str in conf['after']['job']:
-            now = get_ymd()
             cmd = str_format(str, y=now['y'], m=now['m'], d=now['d'])
             run_shell_command(cmd)
 
@@ -92,10 +92,11 @@ def pool_backup(pool, conf):
         if run_shell_command(cmd) != 0:
             ret = -1
 
-    log(f'Pool Metadata Clean Up')
+    log(f'Running After Metadata Commands')
     if 'metadata' in conf['after'] and conf['after']['metadata'] is not None:
+        now = get_ymd()
         for str in conf['after']['metadata']:
-            cmd = str_format(str, filename=pool_meta_filename)
+            cmd = str_format(str, pool_name=pool['name'], pool_uuid=pool['uuid'], y=now['y'], m=now['m'], d=now['d'])
             run_shell_command(cmd)
 
     if ret is None and 'vm' in pool['scope'] and 'vm' in conf and conf['vm'] is not None:

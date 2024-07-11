@@ -43,7 +43,6 @@ def backup_vm(session, pool, conf):
         session.xenapi.VM.set_is_a_template(vm_snapshot_object, False)
         session.xenapi.VM.set_ha_always_run(vm_snapshot_object, False)
 
-#        vm_filename = vm_name + '.xva'
         vm_filename = str_format(conf['env']['vm-template'], vm_name=vm_record['name_label'], vm_uuid=vm_record['uuid'])
         log(f'3. Exporting a snapshot to "{vm_filename}"')
         if Path(vm_filename).exists():
@@ -62,4 +61,11 @@ def backup_vm(session, pool, conf):
         log(f'4. Removing a snapshot')
         session.xenapi.VM.destroy(vm_snapshot_object)
         log(f'   Removed')
+
+        log(f'Running After VM Commands')
+        if 'vm' in conf['after'] and conf['after']['vm'] is not None:
+            now = get_ymd()
+            for str in conf['after']['vm']:
+                cmd = str_format(str, vm_name=vm_record['name_label'], vm_uuid=vm_record['uuid'], y=now['y'], m=now['m'], d=now['d'])
+                run_shell_command(cmd)
     return 0
