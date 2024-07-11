@@ -4,7 +4,7 @@ pools:
     scope: [ 'metadata', 'vm', 'host' ]
   - id: srv-sm-x7dcli-1
     hosts: [ 172.18.0.29 ]
-    scope: [ 'metadata', 'vdi', 'host' ]
+    scope: [ 'metadata', 'vm', 'host' ]
 
 env:
   backup-path: '/mnt/backup/temp'
@@ -15,8 +15,10 @@ env:
   vm-template: '{vm_name}.xva'
 
 vm:
-  - vm-uuid: '94a33466-b76e-b2f4-c4e7-a484f983caf0'
-    vm-name: '1C Web Server 3'
+#  - vm-uuid: '94a33466-b76e-b2f4-c4e7-a484f983caf0'
+#    vm-name: '1C Web Server 3'
+  - vm-uuid: fde030bb-bbb9-a7a2-3097-18763c9aa875
+    vm-name: 'Ansible'
 
 vdi:
   - vm-uuid: '2882af51-704a-c967-a816-7c60443d9a0c'
