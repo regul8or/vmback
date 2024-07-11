@@ -51,6 +51,13 @@ def backup(conf):
             except Exception as err:
                 log(f'Unexpected {err=}, {type(err)=}')
 
+    log(f'Running After Job Commands')
+    if 'job' in conf['after'] and conf['after']['job'] is not None:
+        for str in conf['after']['job']:
+            now = get_ymd()
+            cmd = str_format(str, y=now['y'], m=now['m'], d=now['d'])
+            run_shell_command(cmd)
+
     log('Closing Log')
     log_export(log_path)
 
@@ -74,9 +81,9 @@ def pool_backup(pool, conf):
         return -1
     log(f'Connected, session id: {session.xenapi.session.get_uuid(session._session)}')
 
+    pool_meta_filename = str_format(conf['env']['pool-metadata-template'], pool_name=pool['name'], pool_uuid=pool['uuid'])
+    conf['env']['pool_meta_filename'] = pool_meta_filename
     if 'metadata' in pool['scope']:
-        pool_meta_filename = str_format(conf['env']['pool-metadata-template'], pool_name=pool['name'], pool_uuid=pool['uuid'])
-        conf['env']['pool_meta_filename'] = pool_meta_filename
         log(f'Backing up pool metadata to "{pool_meta_filename}"')
         if Path(pool_meta_filename).exists():
             log(f'*** WARNING: {pool_meta_filename} file exists, removing it')

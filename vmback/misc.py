@@ -74,3 +74,8 @@ def run_shell_command(cmd):
 
 def str_format(str, **kwargs):
     return str.format(**kwargs)
+
+
+def get_ymd():
+    now = datetime.now()
+    return { 'y':now.year, 'm':now.month, 'd':now.day }
