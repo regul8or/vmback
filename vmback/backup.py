@@ -100,11 +100,11 @@ def pool_backup(pool, conf):
             cmd = str_format(str, pool_name=re.escape(pool['name']), pool_uuid=pool['uuid'], y=now['y'], m=now['m'], d=now['d'])
             run_shell_command(cmd)
 
-    if ret is None and 'vm' in pool['scope'] and 'vm' in conf and conf['vm'] is not None:
+    if 'vm' in pool['scope'] and 'vm' in conf and conf['vm'] is not None:
         log(f'Backing up Virtual Machines')
         ret = backup_vm(session, pool, conf)
 
-    if ret is None and 'vdi' in pool['scope'] and 'vdi' in conf and conf['vdi'] is not None:
+    if 'vdi' in pool['scope'] and 'vdi' in conf and conf['vdi'] is not None:
         log(f'Backing up Virtual Disk Images')
         ret = backup_vdi(session, pool, conf)
 
