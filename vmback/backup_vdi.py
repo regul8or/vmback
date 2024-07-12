@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import time
+import re
 
 from .config import Config
 from .misc import *
@@ -37,7 +38,7 @@ def _backup_vdi(session, vdi_object, vm_record, vbd_device, pool, conf):
     if 'vdi' in conf['after'] and conf['after']['vdi'] is not None:
         now = get_ymd()
         for str in conf['after']['vdi']:
-            cmd = str_format(str, vm_name=vm_record['name_label'], vm_uuid=vm_record['uuid'], device=vbd_device, y=now['y'], m=now['m'], d=now['d'])
+            cmd = str_format(str, vm_name=re.escape(vm_record['name_label']), vm_uuid=vm_record['uuid'], device=vbd_device, y=now['y'], m=now['m'], d=now['d'])
             run_shell_command(cmd)
     return 0
 

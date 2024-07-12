@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import os
+import re
 
 from pathlib import Path
 
@@ -96,7 +97,7 @@ def pool_backup(pool, conf):
     if 'metadata' in conf['after'] and conf['after']['metadata'] is not None:
         now = get_ymd()
         for str in conf['after']['metadata']:
-            cmd = str_format(str, pool_name=pool['name'], pool_uuid=pool['uuid'], y=now['y'], m=now['m'], d=now['d'])
+            cmd = str_format(str, pool_name=re.escape(pool['name']), pool_uuid=pool['uuid'], y=now['y'], m=now['m'], d=now['d'])
             run_shell_command(cmd)
 
     if ret is None and 'vm' in pool['scope'] and 'vm' in conf and conf['vm'] is not None:

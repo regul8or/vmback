@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import time
+import re
 
 from .config import Config
 from .misc import *
@@ -66,6 +67,6 @@ def backup_vm(session, pool, conf):
         if 'vm' in conf['after'] and conf['after']['vm'] is not None:
             now = get_ymd()
             for str in conf['after']['vm']:
-                cmd = str_format(str, vm_name=vm_record['name_label'], vm_uuid=vm_record['uuid'], y=now['y'], m=now['m'], d=now['d'])
+                cmd = str_format(str, vm_name=re.escape(vm_record['name_label']), vm_uuid=vm_record['uuid'], y=now['y'], m=now['m'], d=now['d'])
                 run_shell_command(cmd)
     return 0

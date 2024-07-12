@@ -66,7 +66,7 @@ def run_shell_command(cmd):
     log(cmd)
     process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True)
     for line in process.stdout:
-        log(line.decode("utf-8"))
+        log(line.decode("utf-8").rstrip())
     errcode = process.wait()
     log(str(errcode))
     return errcode
