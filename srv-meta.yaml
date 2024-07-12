@@ -1,0 +1,27 @@
+pools:
+  - id: Supermicro-6019
+    hosts: [ 172.18.0.25, 172.18.0.26, 172.18.0.27, 172.18.0.28 ]
+    scope: [ 'metadata' ]
+  - id: srv-sm-x7dcli-1
+    hosts: [ 172.18.0.29 ]
+    scope: [ 'metadata' ]
+
+env:
+  backup-path: '/mnt/backup/temp'
+  log-path: '/var/log/vmback'
+  pool-metadata-template: '{pool_name}.xml'
+  vdi-template: '{vm_name} - {device}.vhd'
+  vm-metadata-template: '{vm_name}.tar'
+  vm-template: '{vm_name}.xva'
+
+
+xe:
+  pool-dump-database: 'xe -s {host} pool-dump-database file-name="{filename}"'
+  vdi-export: 'xe -s {host} vdi-export uuid={uuid} format=vhd filename="{filename}"'
+  vm-export: 'xe -s {host} vm-export uuid={uuid} metadata={metadata} filename="{filename}"'
+
+after:
+  job:
+    - 'borg2 --repo /mnt/backup/xen/pool rcreate --encryption=none --make-parent-dirs'
+    - 'borg2 --repo /mnt/backup/xen/pool create --list {y:04}-{m:02}-{d:02} *.xml'
+    - 'rm *.xml'

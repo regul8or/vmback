@@ -1,7 +1,7 @@
 pools:
   - id: Supermicro-6019
     hosts: [ 172.18.0.25, 172.18.0.26, 172.18.0.27, 172.18.0.28 ]
-    scope: [ 'metadata', 'vdi', 'host' ]
+    scope: [ 'metadata', 'vm', 'vdi', 'host' ]
   - id: srv-sm-x7dcli-1
     hosts: [ 172.18.0.29 ]
     scope: [ 'metadata', 'vm', 'vdi', 'host' ]
@@ -31,8 +31,8 @@ xe:
   vm-export: 'xe -s {host} vm-export uuid={uuid} metadata={metadata} filename="{filename}"'
 
 after:
-  metadata:
-    - 'echo "After pool metadata backup"'
+#  metadata:
+#    - 'echo "After pool metadata backup"'
   vm:
     - 'borg2 --repo /mnt/backup/xen/vm/{vm_name} rcreate --encryption=none --make-parent-dirs'
     - 'borg2 --repo /mnt/backup/xen/vm/{vm_name} create --list {y:04}-{m:02}-{d:02} {vm_name}*'

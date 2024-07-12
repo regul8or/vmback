@@ -1,0 +1,14 @@
+[Unit]
+Description=XCP-ng Cluster Backup
+After=syslog.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+User=borg
+Group=borg
+WorkingDirectory=/home/borg/vmback
+ExecStart=/home/borg/vmback/.venv/bin/python3  -m vmback -c %I.yaml backup
+
+[Install]
+WantedBy=multi-user.target
