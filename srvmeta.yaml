@@ -16,9 +16,9 @@ env:
 
 
 xe:
-  pool-dump-database: 'xe -s {host} pool-dump-database file-name="{filename}"'
-  vdi-export: 'xe -s {host} vdi-export uuid={uuid} format=vhd filename="{filename}"'
-  vm-export: 'xe -s {host} vm-export uuid={uuid} metadata={metadata} filename="{filename}"'
+  pool-dump-database: 'xe -s {host} -u {username} -pw {password} pool-dump-database file-name="{filename}"'
+  vdi-export: 'xe -s {host} -u {username} -pw {password} vdi-export uuid={uuid} format=vhd filename="{filename}"'
+  vm-export: 'xe -s {host} -u {username} -pw {password} vm-export uuid={uuid} metadata={metadata} filename="{filename}"'
 
 after:
   job:
