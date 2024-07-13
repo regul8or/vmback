@@ -10,6 +10,7 @@ Group=borg
 WorkingDirectory=/home/borg/vmback
 EnvironmentFile=/home/borg/vmback/.env
 ExecStart=/home/borg/vmback/.venv/bin/python3  -m vmback -c %I.yaml backup
+Environment=PYTHONUNBUFFERED=1
 
 [Install]
 WantedBy=multi-user.target
