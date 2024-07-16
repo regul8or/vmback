@@ -33,13 +33,6 @@ def _backup_vdi(session, vdi_object, vm_record, vbd_device, pool, conf):
     log(f'3. Removing a snapshot')
     session.xenapi.VDI.destroy(vdi_snapshot_object)
     log(f'   Removed')
-
-    log(f'Running After VDI Commands')
-    if 'vdi' in conf['after'] and conf['after']['vdi'] is not None:
-        now = get_ymd()
-        for str in conf['after']['vdi']:
-            cmd = str_format(str, vm_name=re.escape(vm_record['name_label']), vm_uuid=vm_record['uuid'], device=vbd_device, y=now['y'], m=now['m'], d=now['d'])
-            run_shell_command(cmd)
     return 0
 
 #
@@ -95,4 +88,10 @@ def backup_vdi(session, pool, conf):
                     vm_meta_exported = True
                 _backup_vdi(session, vdi_object, vm_record, vbd_device, pool, conf)
 
+        log(f'Running After VDI Commands')
+        if 'vdi' in conf['after'] and conf['after']['vdi'] is not None:
+            now = get_ymd()
+            for str in conf['after']['vdi']:
+                cmd = str_format(str, vm_name=re.escape(vm_record['name_label']), vm_uuid=vm_record['uuid'], device=vbd_device, y=now['y'], m=now['m'], d=now['d'])
+                run_shell_command(cmd)
     return 0
