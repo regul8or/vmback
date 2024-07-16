@@ -1,10 +1,7 @@
 pools:
   - id: Supermicro-6019
     hosts: [ 172.18.0.25, 172.18.0.26, 172.18.0.27, 172.18.0.28 ]
-    scope: [ 'metadata', 'host' ]
-  - id: srv-sm-x7dcli-1
-    hosts: [ 172.18.0.29 ]
-    scope: [ 'metadata', 'host' ]
+    scope: [ 'metadata', 'vm', 'vdi', 'host' ]
 
 env:
   backup-path: 'c:\temp'
@@ -14,14 +11,21 @@ env:
   vm-metadata-template: '{vm_name}.tar'
   vm-template: '{vm_name}.xva'
 
-vm:
-  - vm-uuid: '94a33466-b76e-b2f4-c4e7-a484f983caf0'
-    vm-name: '1C Web Server 3'
+# vm:
+#   - vm-uuid: '94a33466-b76e-b2f4-c4e7-a484f983caf0'
+#     vm-name: '1C Web Server 3'
 
 vdi:
-#  - vm-uuid: '2882af51-704a-c967-a816-7c60443d9a0c'
-#    vm-name: 'Backup Server'
-#    device: 'xvda'
+  - vm-uuid: 'fde030bb-bbb9-a7a2-3097-18763c9aa875'
+    vm-name: 'Ansible'
+    device: xvda
+  - vm-uuid: 'a2ac7d8b-c064-faab-142d-e5443878f57b'
+    vm-name: 'imapsync'
+  - vm-uuid: '868b0da1-f889-d475-7b32-2961cdca4cac'
+    vm-name: 'Rsyslog Server'
+  - vm-uuid: '437bc252-be98-e684-7825-379dc1829044'
+    vm-name: 'Wi-Fi Controller 2'
+    device: [ xvda, xvdb ]
 
 xe:
   pool-dump-database: 'xe -s {host} -u {username} -pw {password} pool-dump-database file-name="{filename}"'
@@ -39,4 +43,3 @@ after:
     - 'echo "After each host backup"'
   job:
     - 'echo After the backup job'
-    - 'echo {y:04}-{m:02}-{d:02}'

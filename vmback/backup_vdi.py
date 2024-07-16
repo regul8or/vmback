@@ -51,6 +51,15 @@ def backup_vdi(session, pool, conf):
         vm_uuid = vm['vm-uuid']
         vm_record = None
         vm_object = None
+        vm_meta_exported = False
+
+        devices =  [ ]
+        if 'device' in vm:
+            if type(vm['device']) == str:
+                devices.append(vm['device'])
+            else:
+                devices = vm['device']
+
         try:
             vm_object = session.xenapi.VM.get_by_uuid(vm_uuid)
         except XenAPI.Failure as err:
@@ -73,16 +82,17 @@ def backup_vdi(session, pool, conf):
             if vbd_record['type'] != 'Disk':
                 continue
             vbd_device = vbd_record['device']
-            if vbd_device != vm['device']:
-                continue
-            log(f'VBD: {vbd_device} ({vbd_uuid})')
-            vdi_object = vbd_record['VDI']
-            vdi_record = session.xenapi.VDI.get_record(vdi_object)
-            vdi_uuid = vdi_record['uuid']
-            if vdi_record['is_a_snapshot']:
-                continue
-            log(f'VDI UUID: {vdi_uuid}')
-            vm_export_metadata(vm_record, pool, conf)
-            _backup_vdi(session, vdi_object, vm_record, vbd_device, pool, conf)
+            if len(devices) == 0 or vbd_device in devices:
+                log(f'VBD: {vbd_device} ({vbd_uuid})')
+                vdi_object = vbd_record['VDI']
+                vdi_record = session.xenapi.VDI.get_record(vdi_object)
+                vdi_uuid = vdi_record['uuid']
+                if vdi_record['is_a_snapshot']:
+                    continue
+                log(f'VDI UUID: {vdi_uuid}')
+                if not vm_meta_exported:
+                    vm_export_metadata(vm_record, pool, conf)
+                    vm_meta_exported = True
+                _backup_vdi(session, vdi_object, vm_record, vbd_device, pool, conf)
 
     return 0

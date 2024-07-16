@@ -16,9 +16,14 @@ env:
 #     vm-name: '1C Web Server 3'
 
 vdi:
-  - vm-uuid: 'fde030bb-bbb9-a7a2-3097-18763c9aa875'
-    vm-name: 'Ansible'
-    device: 'xvda'
+#  - vm-uuid: 'fde030bb-bbb9-a7a2-3097-18763c9aa875'
+#    vm-name: 'Ansible'
+#  - vm-uuid: 'a2ac7d8b-c064-faab-142d-e5443878f57b'
+#    vm-name: 'imapsync'
+  - vm-uuid: '868b0da1-f889-d475-7b32-2961cdca4cac'
+    vm-name: 'Rsyslog Server'
+#  - vm-uuid: '437bc252-be98-e684-7825-379dc1829044'
+#    vm-name: 'Wi-Fi Controller 2'
 
 xe:
   pool-dump-database: 'xe -s {host} pool-dump-database file-name="{filename}"'
