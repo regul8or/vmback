@@ -1,19 +1,33 @@
 pools:
   - id: Home
     hosts: [ 192.168.1.49 ]
-    scope: [ 'metadata', 'vm', 'vdi' ]
+    scope: [ 'metadata', 'vm' ]
 
 env:
-  backup-path: 'c:\temp'
-  log-path: 'c:\temp\log'
+  backup-path: 'X:\vm'
+  log-path: 'X:\log'
+  pool-metadata-template: '{pool_name}.xml'
+  vdi-template: '{vm_name} - {device}.vhd'
+  vm-metadata-template: '{vm_name}.tar'
+  vm-template: '{vm_name}.xva'
 
 vm:
   - vm-uuid: '2e3180e9-02b2-a754-2158-f9966ac56271'
     vm-name: 'Transmission'
 
 xe:
-  pool-dump-database: 'xe -s {host} -u {username} -pw {password} pool-dump-database file-name={filename}'
+  pool-dump-database: 'xe -s {host} -u {username} -pw {password} pool-dump-database file-name="{filename}"'
+  vdi-export: 'xe -u {username} -pw {password} -s {host} vdi-export uuid={uuid} format=vhd filename="{filename}"'
+  vm-export: 'xe -u {username} -pw {password} -s {host} vm-export uuid={uuid} metadata={metadata} filename="{filename}"'
 
 after:
-  metadata:
-    - 'del {filename}'
+#  metadata:
+#    - 'echo "After pool metadata backup"'
+  vm:
+    - 'xcopy /y "{vm_name}*" backup\'
+  vdi:
+    - 'xcopy /y "{vm_name}*" backup\'
+#   host:
+#     - 'echo "After each host backup"'
+  job:
+    - 'xcopy /y *.xml backup\'

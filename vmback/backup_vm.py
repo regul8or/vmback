@@ -66,7 +66,9 @@ def backup_vm(session, pool, conf):
         log(f'Running After VM Commands')
         if 'vm' in conf['after'] and conf['after']['vm'] is not None:
             now = get_ymd()
+            vm_name = vm_record['name_label']
+            vm_name_escaped = re.escape(vm_name)
             for str in conf['after']['vm']:
-                cmd = str_format(str, vm_name=re.escape(vm_record['name_label']), vm_uuid=vm_record['uuid'], y=now['y'], m=now['m'], d=now['d'])
+                cmd = str_format(str, vm_name=vm_name, vm_name_escaped=vm_name_escaped, vm_uuid=vm_record['uuid'], y=now['y'], m=now['m'], d=now['d'])
                 run_shell_command(cmd)
     return 0

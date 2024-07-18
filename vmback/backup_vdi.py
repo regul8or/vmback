@@ -91,7 +91,9 @@ def backup_vdi(session, pool, conf):
         log(f'Running After VDI Commands')
         if 'vdi' in conf['after'] and conf['after']['vdi'] is not None:
             now = get_ymd()
+            vm_name = vm_record['name_label']
+            vm_name_escaped = re.escape(vm_name)
             for str in conf['after']['vdi']:
-                cmd = str_format(str, vm_name=re.escape(vm_record['name_label']), vm_uuid=vm_record['uuid'], device=vbd_device, y=now['y'], m=now['m'], d=now['d'])
+                cmd = str_format(str, vm_name=vm_name, vm_name_escaped=vm_name_escaped, vm_uuid=vm_record['uuid'], device=vbd_device, y=now['y'], m=now['m'], d=now['d'])
                 run_shell_command(cmd)
     return 0
