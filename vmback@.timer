@@ -3,7 +3,6 @@ Description=XCP-ng Cluster Backup
 
 [Timer]
 OnCalendar=%I *-*-* 08:00:00
-RandomizedDelaySec=30m
 AccuracySec=1m
 
 [Install]

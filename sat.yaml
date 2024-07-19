@@ -2,9 +2,6 @@ pools:
   - id: Supermicro-6019
     hosts: [ 172.18.0.25, 172.18.0.26, 172.18.0.27, 172.18.0.28 ]
     scope: [ 'metadata', 'vm', 'vdi', 'host' ]
-  - id: srv-sm-x7dcli-1
-    hosts: [ 172.18.0.29 ]
-    scope: [ 'metadata', 'vm', 'vdi', 'host' ]
 
 env:
   backup-path: '/mnt/backup/temp'
@@ -14,22 +11,11 @@ env:
   vm-metadata-template: '{vm_name}.tar'
   vm-template: '{vm_name}.xva'
 
-vm:
-  - vm-uuid: fde030bb-bbb9-a7a2-3097-18763c9aa875
-    vm-name: 'Ansible'
+vdi:
   - vm-uuid: c739d128-0f62-4b6a-251a-0255bbc29fdb
     vm-name: 'Primary Domain Controller'
   - vm-uuid: fa7eea0e-e585-2d78-0690-4cc66dac0b96
     vm-name: 'File Server 2012 R2'
-  - vm-uuid: 97421c95-7f9f-2c15-0761-5ae9beaa9490
-    vm-name: 'Web Server 2'
-  - vm-uuid: 6fc92bd9-a74f-4df1-1590-81a1d3828932
-    vm-name: 'Zabbix 5'
-
-vdi:
-  - vm-uuid: '2882af51-704a-c967-a816-7c60443d9a0c'
-    vm-name: 'Backup Server'
-    device: 'xvda'
 
 xe:
   pool-dump-database: 'xe -s {host} -u {username} -pw {password} pool-dump-database file-name="{filename}"'
@@ -40,13 +26,13 @@ after:
 #  metadata:
 #    - 'echo "After pool metadata backup"'
   vm:
-    - 'borg2 --repo /mnt/backup/xen/vm/{vm_name} rcreate --encryption=none --make-parent-dirs'
-    - 'borg2 --repo /mnt/backup/xen/vm/{vm_name} create --list {y:04}-{m:02}-{d:02} {vm_name}*'
-    - 'rm {vm_name}*'
+    - 'borg2 --repo /mnt/backup/xen/vm/{vm_name_escaped} rcreate --encryption=none --make-parent-dirs'
+    - 'borg2 --repo /mnt/backup/xen/vm/{vm_name_escaped} create --list {y:04}-{m:02}-{d:02} {vm_name_escaped}*'
+    - 'rm {vm_name_escaped}*'
   vdi:
-    - 'borg2 --repo /mnt/backup/xen/vm/{vm_name} rcreate --encryption=none --make-parent-dirs'
-    - 'borg2 --repo /mnt/backup/xen/vm/{vm_name} create --list {y:04}-{m:02}-{d:02} {vm_name}*'
-    - 'rm {vm_name}*'
+    - 'borg2 --repo /mnt/backup/xen/vm/{vm_name_escaped} rcreate --encryption=none --make-parent-dirs'
+    - 'borg2 --repo /mnt/backup/xen/vm/{vm_name_escaped} create --list {y:04}-{m:02}-{d:02} {vm_name_escaped}*'
+    - 'rm {vm_name_escaped}*'
 #  host:
 #    - 'echo "After each host backup"'
   job:

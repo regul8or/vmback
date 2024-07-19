@@ -41,8 +41,8 @@ after:
     - 'borg2 --repo /mnt/backup/xen/vm/{vm_name_escaped} rcreate --encryption=none --make-parent-dirs'
     - 'borg2 --repo /mnt/backup/xen/vm/{vm_name_escaped} create --list {y:04}-{m:02}-{d:02} {vm_name_escaped}*'
     - 'rm {vm_name_escaped}*'
-#   host:
-#     - 'echo "After each host backup"'
+#  host:
+#    - 'echo "After each host backup"'
   job:
     - 'borg2 --repo /mnt/backup/xen/pool rcreate --encryption=none --make-parent-dirs'
     - 'borg2 --repo /mnt/backup/xen/pool create --list {y:04}-{m:02}-{d:02} *.xml'
