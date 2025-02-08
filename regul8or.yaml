@@ -11,9 +11,23 @@ env:
   vm-metadata-template: '{vm_name}.tar'
   vm-template: '{vm_name}.xva'
 
-vm:
+vm-postpone:
+  - vm-uuid: 'ba47e2c7-9b02-2683-ee6d-1bf9f3c85cc7'
+    vm-name: 'App Server'
+  - vm-uuid: 'cd61472d-a9d8-e04e-ac7f-96e317d57679'
+    vm-name: 'Domain Controller'
+  - vm-uuid: '22556e83-4ba9-98d9-a67a-b725cd3943a6'
+    vm-name: 'MQTT Server'
+  - vm-uuid: 'aa8b7796-f5ed-e19a-2c8c-be858da92a2e'
+    vm-name: 'MySQL Server'
   - vm-uuid: '2e3180e9-02b2-a754-2158-f9966ac56271'
     vm-name: 'Transmission'
+  - vm-uuid: 'ae310646-a4d5-6f16-789f-b9768836f349'
+    vm-name: 'Web Server'
+
+vm:
+  - vm-uuid: '963991be-02df-c69c-a7fd-f4f779b5cb94'
+    vm-name: 'Machine Learning'
 
 xe:
   pool-dump-database: 'xe -s {host} -u {username} -pw {password} pool-dump-database file-name="{filename}"'

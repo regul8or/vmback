@@ -9,9 +9,9 @@ from .xapi import *
 
 def _list_pool_vm(pool, conf):
     if 'id' in pool:
-        log(f'Gettong the list of VMs in pool: {pool["id"]}')
+        log(f'Getting the list of VMs in pool: {pool["id"]}')
     else:
-        log('Gettong the list of VMs')
+        log('Getting the list of VMs')
 
     session = pool_connect(pool, conf)
     if session is None:
