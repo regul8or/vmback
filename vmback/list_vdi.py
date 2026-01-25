@@ -1,69 +1,133 @@
-#!/usr/bin/env python3
+"""
+List virtual disk images (VDIs) in pools
+"""
 
+import logging
 import prettytable
+from typing import Dict, Any
 
-from .config import Config
-from .misc import *
-from .xapi import *
+from .xapi import pool_connect
 
 
-def _list_pool_vdi(pool, conf):
-    if 'id' in pool:
-        log(f'Getting the list of VDIs in pool: {pool["id"]}')
-    else:
-        log('Getting the list of VDIs')
+logger = logging.getLogger(__name__)
 
-    session = pool_connect(pool, conf)
-    if session is None:
-        log('*** FATAL: Could not process a pool')
-        return -1
-    log(f'Connected, session id: {session.xenapi.session.get_uuid(session._session)}')
 
-    table = prettytable.PrettyTable()
-    table.field_names = ['vm uuid', 'vm name_label', 'power_state', 'device', 'name_label', 'virtual_size', 'snapshot']
-    table.border = False
-    table.hrules = prettytable.HEADER
-    table.vrules = prettytable.NONE
-    table.preserve_internal_border = True
-    table.left_padding_width = 0
-    table.align = 'l'
-    table.align['virtual_size'] = 'r'
-    all_vm_objects = session.xenapi.VM.get_all()
-    for vm_object in all_vm_objects:
-        vm = session.xenapi.VM.get_record(vm_object)
-        # Skip template
-        if vm['is_a_template']:
-            continue
-        # Skip control domain
-        if vm['is_control_domain']:
-            continue
-        for vbd_object in vm['VBDs']:
-            vbd = session.xenapi.VBD.get_record(vbd_object)
-            # Skip not disks
-            if vbd['type'] != 'Disk':
+def list_pool_vdi(pool: Dict[str, Any], conf: Dict[str, Any]) -> int:
+    """
+    List all VDIs in a pool
+    
+    Args:
+        pool: Pool configuration
+        conf: Full configuration
+        
+    Returns:
+        0 on success, -1 on error
+    """
+    pool_id = pool.get('id', 'unknown')
+    logger.info(f"Getting VDI list for pool: {pool_id}")
+    
+    session = None
+    
+    try:
+        # Connect to pool
+        session = pool_connect(pool, conf)
+        logger.info(f"Session ID: {session.xenapi.session.get_uuid(session._session)}")
+        
+        # Create table
+        table = prettytable.PrettyTable()
+        table.border = False
+        table.hrules = prettytable.HEADER
+        table.vrules = prettytable.NONE
+        table.preserve_internal_border = True
+        table.align = 'l'
+        table.left_padding_width = 0
+        table.field_names = [
+            'VM UUID',
+            'VM Name',
+            'Power State',
+            'Device',
+            'VDI Name',
+            'Size',
+            'Snapshot'
+        ]
+        
+        # Get all VMs
+        all_vm_objects = session.xenapi.VM.get_all()
+        
+        for vm_object in all_vm_objects:
+            vm = session.xenapi.VM.get_record(vm_object)
+            
+            # Skip templates
+            if vm['is_a_template']:
                 continue
-            vdi = session.xenapi.VDI.get_record(vbd['VDI'])
-            is_a_snapshot = ''
-            if vdi['is_a_snapshot']:
-                is_a_snapshot = 'Yes'
-            size = f"{int(vdi['virtual_size']):,}"
-            table.add_row([vm['uuid'], vm['name_label'], vm['power_state'], vbd['device'], vdi['name_label'], size, is_a_snapshot])
-    print(table)
-
-    if session is not None:
-        log('Closing session')
-        session.logout()
-
-    return 0
-
-
-def list_vdi(conf):
-    if 'pools' in conf:
-        pools = conf['pools']
-        for pool in pools:
+            
+            # Skip control domains
+            if vm['is_control_domain']:
+                continue
+            
+            # Process each VBD (Virtual Block Device)
+            for vbd_object in vm['VBDs']:
+                vbd = session.xenapi.VBD.get_record(vbd_object)
+                
+                # Skip non-disk devices (CD-ROMs, etc.)
+                if vbd['type'] != 'Disk':
+                    continue
+                
+                # Get VDI information
+                vdi = session.xenapi.VDI.get_record(vbd['VDI'])
+                
+                is_snapshot = 'Yes' if vdi['is_a_snapshot'] else ''
+                size = f"{int(vdi['virtual_size']):,}"
+                
+                table.add_row([
+                    vm['uuid'],
+                    vm['name_label'],
+                    vm['power_state'],
+                    vbd['device'],
+                    vdi['name_label'],
+                    size,
+                    is_snapshot
+                ])
+        
+        print(table)
+        return 0
+        
+    except Exception as e:
+        logger.error(f"Error listing VDIs: {e}", exc_info=True)
+        return -1
+        
+    finally:
+        if session is not None:
             try:
-                _list_pool_vdi(pool, conf)
-            except Exception as err:
-                log(f'Unexpected {err=}, {type(err)=}')
+                logger.info("Closing session")
+                session.logout()
+            except Exception as e:
+                logger.warning(f"Error closing session: {e}")
 
-    return 0
+
+def list_vdi(conf: Dict[str, Any]) -> int:
+    """
+    List VDIs for all configured pools
+    
+    Args:
+        conf: Full configuration
+        
+    Returns:
+        0 on success, -1 on error
+    """
+    if 'pools' not in conf or not conf['pools']:
+        logger.warning("No pools configured")
+        return 0
+    
+    ret = 0
+    
+    for pool in conf['pools']:
+        try:
+            pool_ret = list_pool_vdi(pool, conf)
+            if pool_ret != 0:
+                ret = -1
+        except Exception as e:
+            logger.error(f"Unexpected error listing VDIs: {e}", exc_info=True)
+            ret = -1
+    
+    return ret

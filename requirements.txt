@@ -3,3 +3,6 @@ prettytable
 python-dotenv
 PyYAML
 XenAPI
+requests
+urllib3
+tqdm
