@@ -1,9 +1,10 @@
 # vmback
 
 **Document Last Updated**: 2026-08-02
+
 **Project Status**: Production
 
-Backup XCP-ng Virtual Machines, Virtual Disk Images, and pool metadata to local storage. Designed for home lab environments that use Borg Backup for retention.
+Backup XCP-ng Virtual Machines, Virtual Disk Images, and pool metadata to local storage. Designed both for enterprise environments that use Borg Backup for retention and a home lab with external USB or NAS storage.
 
 ## How It Works
 
@@ -98,7 +99,6 @@ Set permissions to `600`. vmback warns if the file grants wider access. Each poo
 
 ## Repository Structure
 
-```
 ```
 conf/                          # Configuration files
 ├── regul8or.yaml              # Sample pool config (Home Lab)
